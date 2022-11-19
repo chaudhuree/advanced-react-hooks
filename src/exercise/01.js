@@ -16,8 +16,17 @@ import * as React from 'react'
 //   return ({...state,...action})  //* ({...state=({count:initialCount=0}),...action=({count:count+step=>1,2,3})})
 // }
 //? ex cr: 03
+// const countReducer = (state, action) => {
+//   return {...state, ...(typeof action === 'function' ? action(state) : action)}
+// }
+//? ex cr : 04
 const countReducer = (state, action) => {
-  return {...state, ...(typeof action === 'function' ? action(state) : action)}
+  switch (action.type) {
+    case 'INCREMENT':
+      return {...state, count: state.count + action.payload}
+    default:
+      throw new Error(`${action.type} is not correct`)
+  }
 }
 function Counter({initialCount = 0, step = 1}) {
   //? : normal exercise
@@ -41,13 +50,19 @@ function Counter({initialCount = 0, step = 1}) {
   // const increment = () => setState({count: count + step})
 
   //? ex cr: 03
-  const [state, setState] = React.useReducer(countReducer, {
+  // const [state, setState] = React.useReducer(countReducer, {
+  //   count: initialCount,
+  // })
+  // const {count} = state
+  // const increment = () =>
+  //   setState(currentState => ({count: currentState.count + step}))
+
+  //? ex cr : 04
+  const [state, dispatch] = React.useReducer(countReducer, {
     count: initialCount,
   })
   const {count} = state
-  const increment = () =>
-    setState(currentState => ({count: currentState.count + step}))
-
+  const increment = () => dispatch({type: 'INCREMENT', payload: step})
   return <button onClick={increment}>{count}</button>
 }
 
